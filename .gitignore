@@ -1,0 +1,42 @@
+# === Node.js Essentials ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Environment Files ===
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# === OS & Editor Files ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# === Logs ===
+logs
+*.log
+log.txt
+
+# === Build & Temp ===
+dist/
+build/
+tmp/
+temp/
+.cache/
+
+# === Misc ===
+*.bak
+*.old
+*.swp
+
+# === Coverage / Testing ===
+coverage/
+*.lcov
+
+# === MongoDB dump files ===
+dump/
