@@ -7,6 +7,8 @@ import { Post } from './models/post.model.js';
 import cookieParser from 'cookie-parser';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'; 
+import { isLoggedIn } from './middleware/isLoggedIn.js';
+import { upload } from './utils/multer.utils.js';
 
 const app = express();
 const port = 3000;
@@ -23,6 +25,20 @@ app.use(cookieParser());
 app.get('/', (req, res) => {
   res.render("index");
 });
+
+
+app.get('/profile/upload', (req, res) => {
+  res.render("upload");
+});
+
+app.post('/upload', isLoggedIn, upload.single('image'), async (req, res) => {
+   let user = await User.findOne({email: req.user.email})
+   user.profileImage = req.file.filename
+   await user.save()
+   res.redirect("/profile")
+});
+
+
 
 app.get('/profile', isLoggedIn, async (req, res) => {
    let user =  await User.findOne({email: req.user.email}).populate("posts")
@@ -52,7 +68,6 @@ app.get('/like/:id', isLoggedIn, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 app.get('/edit/:id', isLoggedIn, async (req, res) => {
   try {
@@ -111,9 +126,6 @@ app.post('/edit/:id', isLoggedIn, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-
 
 
 app.post('/post', isLoggedIn, async (req, res) => {
@@ -206,14 +218,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-function isLoggedIn(req,res,next){
-    if(req.cookies.token === "") res.redirect("/login")
-    else{
-     let data = jwt.verify(req.cookies.token, "shhhh")
-     req.user = data
-     next()
-    }
-}
+
 
 app.listen(port, () => {
   console.log(`🚀 Server listening at http://localhost:${port}`);

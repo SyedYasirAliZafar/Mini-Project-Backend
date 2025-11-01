@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Post</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+  <div class="bg-zinc-800 p-8 rounded-xl shadow-lg w-full max-w-lg">
+    <h1 class="text-2xl font-semibold mb-6 text-center">Upload Profile Picture</h1>
+
+    <form aurocomplete = 'off' action="/upload" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+
+      <div class="flex justify-between">
+        <input type="file" name="image">
+        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md">Upload File</button>
+      </div>
+    </form>
+    
+  </div>
+
+    <div class="mt-8">
+      <a 
+      href="/profile"
+      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-md cursor-pointer active:scale-95 transition"
+    >
+      Back To Profile
+    </a>
+    </div>
+
+</body>
+</html>
