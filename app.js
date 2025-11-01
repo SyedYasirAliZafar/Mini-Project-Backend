@@ -24,11 +24,27 @@ app.get('/', (req, res) => {
   res.render("index");
 });
 
-app.get('/profile', isLoggedIn, (req, res) => {
-  console.log(req.user);
-  res.render("login")
+app.get('/profile', isLoggedIn, async (req, res) => {
+   let user =  await User.findOne({email: req.user.email}).populate("posts")
+  res.render("profile", {user})
   
 });
+
+
+app.post('/post', isLoggedIn, async (req, res) => {
+   let user =  await User.findOne({email: req.user.email})
+   let {content} =  req.body
+   let post = await Post.create({
+    user: user._id,
+    content
+  })
+
+  user.posts.push(post._id)
+   await user.save()
+   res.redirect("/profile")
+  
+});
+
 
 app.get('/login',  (req, res) => {
   res.render("login");
@@ -61,22 +77,15 @@ app.post('/register', async (req, res) => {
       age
     });
 
-    // ✅ generate token
-    const token = jwt.sign(
-      { email: user.email, user_id: user._id },
-      "shhhh",
-      { expiresIn: "7d" }
-    );
-
-    // ✅ send token as cookie
-    res.cookie("token", token, { httpOnly: true });
-    res.send("✅ User Registered Successfully");
+    
+    res.redirect("/login");
 
   } catch (err) {
-    console.error("❌ Error in /create route:", err);
+    console.error("❌ Error in /register route:", err);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 app.post('/login', async (req, res) => {
   try {
@@ -98,7 +107,7 @@ app.post('/login', async (req, res) => {
             
             // ✅ send token as cookie
             res.cookie("token", token, { httpOnly: true });
-            res.status(200).send("✅ You are now Logged In")
+            res.redirect("/profile")
         } 
             else res.redirect("/login")
     })
@@ -113,7 +122,7 @@ app.post('/login', async (req, res) => {
 });
 
 function isLoggedIn(req,res,next){
-    if(req.cookies.token === "") res.send("You must be logged in")
+    if(req.cookies.token === "") res.redirect("/login")
     else{
      let data = jwt.verify(req.cookies.token, "shhhh")
      req.user = data

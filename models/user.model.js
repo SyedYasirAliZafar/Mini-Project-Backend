@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   posts: [
-    {type: mongoose.Schema.Types.ObjectId, ref: "post"}
+    {type: mongoose.Schema.Types.ObjectId, ref: "Post"}
   ]
 }, { timestamps: true }); 
 

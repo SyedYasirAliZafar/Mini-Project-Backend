@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="w-full min-h-screen bg-zinc-900 text-white flex flex-col">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center px-8 py-4 border-b border-zinc-700 bg-zinc-800">
+    <h1 class="text-2xl font-semibold">Create Post</h1>
+    <a 
+      href="/logout"
+      class="px-4 py-2 bg-red-600 hover:bg-red-700 border border-red-500 rounded-md cursor-pointer active:scale-95 transition"
+    >
+      Logout
+    </a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center w-full px-8 py-10">
+    
+    <!-- Greeting -->
+    <h2 class="text-2xl font-medium mb-2">Hello, <%= user.name %> 👋</h2>
+    <p class="mb-8 text-gray-300">You can create a new post below 👇</p>
+
+    <!-- Post Form -->
+    <form action="/post" method="post" class="flex flex-col gap-4 w-full max-w-2xl">
+      <textarea 
+        name="content"
+        placeholder="What's on your mind?" 
+        class="resize-none border border-zinc-600 rounded-md bg-zinc-800 w-full p-3 outline-none placeholder-gray-400 focus:border-blue-500"
+        rows="4"
+        required
+      ></textarea>
+
+      <input 
+        type="submit" 
+        value="Create New Post" 
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-md cursor-pointer active:scale-95 transition font-medium w-fit self-end"
+      >
+    </form>
+
+    <!-- Posts Section -->
+    <section class="posts w-full max-w-4xl mt-16">
+  <h3 class="text-lg text-zinc-400 mb-5">Your Posts</h3>
+
+  <div class="post-container flex flex-col gap-6">
+    <% user.posts.reverse().forEach(function(post){ %>
+      <div class="post rounded-md bg-zinc-800 p-5 border border-zinc-700 shadow-md">
+        <h4 class="text-blue-500 mb-2 font-medium"><%= user.userName %></h4>
+        <p class="text-sm tracking-tight mb-3"><%= post.content %></p>
+        <div class="btns flex gap-4">
+          <a class="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer transition">Like</a>
+          <a class="px-3 py-1 rounded-md bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition text-black font-medium">Edit</a>
+          <a class="px-3 py-1 rounded-md bg-red-500 hover:bg-red-600 cursor-pointer transition text-black font-medium">Delete</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+
+  </main>
+
+</body>
+</html>
