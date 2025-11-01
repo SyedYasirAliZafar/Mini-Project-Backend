@@ -27,8 +27,93 @@ app.get('/', (req, res) => {
 app.get('/profile', isLoggedIn, async (req, res) => {
    let user =  await User.findOne({email: req.user.email}).populate("posts")
   res.render("profile", {user})
-  
 });
+
+app.get('/like/:id', isLoggedIn, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Post not found");
+
+    const userId = req.user.user_id.toString();
+
+    // Convert ObjectIds to strings before checking
+    const likedIndex = post.likes.findIndex(id => id.toString() === userId);
+
+    if (likedIndex === -1) {
+      post.likes.push(userId); // Add like
+    } else {
+      post.likes.splice(likedIndex, 1); // Remove like
+    }
+
+    await post.save();
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("❌ Error in /like route:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+app.get('/edit/:id', isLoggedIn, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Post not found");
+
+    // Only allow editing own posts
+    if (post.user.toString() !== req.user.user_id.toString()) {
+      return res.status(403).send("Not authorized to edit this post");
+    }
+
+    res.render("edit", { post }); // pass post to the EJS page
+
+  } catch (error) {
+    console.error("❌ Error in /edit route:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get('/delete/:id', isLoggedIn, async (req, res) => {
+  try {
+    // 1️⃣ Find the post first
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Post not found");
+
+    // 3️⃣ Remove post ID from user's 'posts' array
+    await User.findByIdAndUpdate(post.user, { $pull: { posts: post._id } });
+
+    // 4️⃣ Delete the post document itself
+    await Post.findByIdAndDelete(req.params.id);
+
+    // 5️⃣ Redirect to profile page
+    res.redirect("/profile");
+
+  } catch (error) {
+    console.error("❌ Error in /delete route:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.post('/edit/:id', isLoggedIn, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send("Post not found");
+
+    if (post.user.toString() !== req.user.user_id.toString()) {
+      return res.status(403).send("Not authorized to edit this post");
+    }
+
+    post.content = req.body.content;
+    await post.save();
+
+    res.redirect("/profile");
+  } catch (error) {
+    console.error("❌ Error in /edit POST route:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
 
 
 app.post('/post', isLoggedIn, async (req, res) => {

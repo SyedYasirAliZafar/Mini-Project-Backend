@@ -52,18 +52,20 @@
       <div class="post rounded-md bg-zinc-800 p-5 border border-zinc-700 shadow-md">
         <h4 class="text-blue-500 mb-2 font-medium"><%= user.userName %></h4>
         <p class="text-sm tracking-tight mb-3"><%= post.content %></p>
+        <small><%= post.likes.length %> Likes</small>
         <div class="btns flex gap-4">
-          <a class="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer transition">Like</a>
-          <a class="px-3 py-1 rounded-md bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition text-black font-medium">Edit</a>
-          <a class="px-3 py-1 rounded-md bg-red-500 hover:bg-red-600 cursor-pointer transition text-black font-medium">Delete</a>
+          <a class="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer transition " href="/like/<%= post._id %>">
+            <%= (post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike") %>
+
+          </a>
+          <a class="px-3 py-1 rounded-md bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition text-black font-medium" href="/edit/<%=post._id %>">Edit</a>
+          <a class="px-3 py-1 rounded-md bg-red-500 hover:bg-red-600 cursor-pointer transition text-black font-medium" href="/delete/<%= post._id %>" >Delete</a>
         </div>
       </div>
     <% }) %>
   </div>
 </section>
 
-
-  </main>
-
+</main>
 </body>
 </html>
